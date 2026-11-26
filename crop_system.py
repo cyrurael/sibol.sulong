@@ -19,12 +19,15 @@ st.set_page_config(
 # ==================================================
 # LOAD DATA AND TRAIN MODELS
 # ==================================================
+# ==================================================
+# LOAD DATA AND TRAIN MODELS — FIXED VERSION
+# ==================================================
 @st.cache_resource
 def init_models():
-    csv_file = "Crop_Yiedl_Data.csv"
+    csv_file = "Crop_Yield_Data.csv"
     
     if not os.path.exists(csv_file):
-        return None, None, None, None, None, None, None, None, "CSV_NOT_FOUND"
+        return None, "CSV_NOT_FOUND"  # ✅ Returns 2 values only
     
     df = pd.read_csv(csv_file)
     
@@ -85,7 +88,7 @@ def init_models():
     rmse = np.sqrt(mean_squared_error(yy_test, y_pred))
     r2 = r2_score(yy_test, y_pred)
     
-    return {
+    result_dict = {
         'rec_model': rec_model,
         'yield_model': yield_model,
         'le_crop': le_crop,
@@ -100,10 +103,13 @@ def init_models():
         },
         'metrics': {'rec_acc': rec_acc, 'rmse': rmse, 'r2': r2},
         'features': FEATURES
-    }, None
+    }
+    
+    return result_dict, None  # ✅ Returns 2 values only
+
 
 # ==================================================
-# MAIN APP
+# MAIN APP — This part stays the same
 # ==================================================
 with st.spinner("Loading data and training models..."):
     data, error = init_models()
@@ -121,6 +127,7 @@ le_season = data['le_season']
 df = data['df']
 cols = data['cols']
 metrics = data['metrics']
+
 
 st.title("🌾 Crop Recommendation & Yield Prediction")
 st.markdown("---")
